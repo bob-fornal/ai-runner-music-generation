@@ -19,9 +19,12 @@ function calculateStepLength(heightInches, minutesPerMile) {
   return stepLengthInches;
 }
 
-function calculateBpm(heightInches, minutesPerMile) {
+function calculateBpm(heightInches, minutesPerMile, divisor = 1) {
+  if (typeof divisor !== 'number' || !Number.isFinite(divisor) || divisor <= 0) {
+    throw new RangeError('divisor must be a positive, finite number.');
+  }
   const stepLengthInches = calculateStepLength(heightInches, minutesPerMile);
-  const bpm = INCHES_PER_MILE / stepLengthInches / minutesPerMile;
+  const bpm = INCHES_PER_MILE / stepLengthInches / minutesPerMile / divisor;
   if (!Number.isFinite(bpm) || bpm <= 0) {
     throw new RangeError('Inputs must produce a positive, finite BPM.');
   }
@@ -33,11 +36,13 @@ module.exports = { calculateBpm, calculateStepLength };
 if (require.main === module) {
   const args = process.argv.slice(2);
   try {
-    if (args.length !== 2) {
-      throw new Error('Usage: node index.js <height-in-inches> <minutes-per-mile>');
+    if (args.length < 2 || args.length > 3) {
+      throw new Error('Usage: node index.js <height-in-inches> <minutes-per-mile> [divisor]');
     }
-    const bpm = calculateBpm(Number(args[0]), Number(args[1]));
-    console.log(`Estimated BPM (steps per minute): ${bpm.toFixed(2)}`);
+    const divisor = args.length === 3 ? Number(args[2]) : 1;
+    const bpm = calculateBpm(Number(args[0]), Number(args[1]), divisor);
+    const label = divisor === 1 ? 'Estimated BPM (steps per minute)' : `Modified music BPM (cadence / ${divisor})`;
+    console.log(`${label}: ${bpm.toFixed(2)}`);
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;
