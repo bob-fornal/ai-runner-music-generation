@@ -8,7 +8,7 @@ From the repository directory:
 
 ```sh
 node index.js 70 10
-# Estimated BPM (steps per minute): 139.25
+# Estimated BPM (steps per minute): 170.78
 
 npm start -- 68.5 10.5
 ```
@@ -20,22 +20,38 @@ Invalid inputs print an error and exit with status 1.
 ## Use as a function
 
 ```js
-const { calculateBpm } = require('./index');
+const { calculateBpm, calculateStepLength } = require('./index');
 
 const bpm = calculateBpm(70, 10);
+const stepLengthInches = calculateStepLength(70, 10); // 37.1 inches
 ```
 
-The function accepts positive, finite numbers and returns an unrounded BPM.
+Both functions accept height in inches and pace in minutes per mile as positive,
+finite numbers. They return unrounded BPM or one-step length in inches.
 Invalid inputs or results outside the positive, finite numeric range throw a
 `RangeError`.
 
 ## Estimation model
 
 Height and pace alone cannot determine a runner's actual cadence. This calculator
-uses a fixed, approximate **step length of 0.65 × height**, as a simplifying
-assumption, not a validated prediction for individual runners:
+estimates average leg length from height and adjusts step length with pace:
 
-`BPM = 63,360 inches per mile / (height in inches × 0.65) / minutes per mile`
+- `leg length in inches = height in inches × 0.53`
+- `relative speed = 10 / minutes per mile`
+- `step length in inches = leg length × relative speed ^ 0.75`
+- `BPM = 63,360 / step length in inches / minutes per mile`
+
+These are explicit heuristic assumptions, not an empirically validated running
+model: leg length is approximated as 53% of height, and step length equals leg
+length at the reference pace of 10 minutes per mile (6 mph). The 0.75 exponent
+models most of a speed increase coming from longer steps, with some coming from
+higher cadence. Doubling speed increases step length by about 68% and cadence by
+about 19%, instead of doubling cadence as the old fixed-step model did.
+
+The constants are modeling choices, not population measurements or a guarantee
+of improved accuracy. Measured leg length and step lengths at known paces would
+be needed to calibrate this model for an individual. It is intended for running,
+not walking or sprinting; extreme paces should not be treated as reliable.
 
 A step is one footfall, not a full two-step stride. Music BPM corresponds to one
 beat per step. Real step length varies with pace, gait, terrain, and the runner;
