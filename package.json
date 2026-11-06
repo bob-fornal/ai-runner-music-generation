@@ -1,0 +1,15 @@
+{
+  "name": "ai-runner-music-generation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Estimate running cadence and music BPM from height and target mile time.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
