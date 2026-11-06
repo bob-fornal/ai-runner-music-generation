@@ -123,3 +123,7 @@ npm test
 ```
 
 Tests use Node's built-in test runner. No separate lint command is configured.
+
+## Initial Prompt
+
+> Build out a JavaScript function that I can run that will calculate a Beats Per Minute (equivalent to steps per minute) for a runner based on the runner's height in inches and time per mile (e.g. 10 minute mile) target. For now, this can target Node as the runner.
