@@ -63,6 +63,31 @@ cycle; this calculator does not generate separate inhale/exhale cues. This is
 an optional rhythm experiment, not a universal breathing technique or a claim
 that these divisors improve mentality or movement.
 
+## Compare variations in a table
+
+Run `node table.js` from the repository directory to display eight rows for a
+70-inch runner, from 14 down to 7 minutes per mile in one-minute increments.
+Each row includes height, pace, undivided cadence, and music BPM for divisors
+2, 4, and 5. Displayed BPM values are rounded to two decimal places.
+
+The parent function can also accept different heights, pace lists, and divisors:
+
+```js
+const { generateBpmTable } = require('./table');
+
+const defaultRows = generateBpmTable();
+const customRows = generateBpmTable(68.5, [12, 10.5, 8], [2, 4, 5]);
+console.table(customRows);
+```
+
+`generateBpmTable(heightInches = 70, paces = [14, 13, 12, 11, 10, 9, 8, 7],
+divisors = [2, 4, 5])` returns an array of row objects with `heightInches`,
+`minutesPerMile`, `cadenceBpm`, and `BPM / <divisor>` fields. It calls
+`calculateBpm` for every variation and returns unrounded numeric values.
+Paces and divisors must be nonempty arrays of positive, finite numbers; invalid
+inputs throw a `RangeError`. Input order is preserved and input arrays are not
+modified. Importing the module does not print a table.
+
 ## Estimation model
 
 Height and pace alone cannot determine a runner's actual cadence. This calculator
